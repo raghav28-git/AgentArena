@@ -1,0 +1,9 @@
+strands-agents
+strands-agents-tools
+fastapi
+uvicorn[standard]
+mangum
+boto3
+python-dotenv
+pydantic
+cedarpy
