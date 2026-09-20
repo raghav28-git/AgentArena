@@ -1045,7 +1045,7 @@ export default function LandingPage() {
           <a className="h-9 px-space-lg rounded-lg bg-primary-container hover:bg-primary-container/90 text-on-primary font-headline-sm text-headline-sm flex items-center justify-center transition-colors specular-border shadow-md" href="#interactive-suite">
             Start Security Audit
           </a>
-          <a className="h-9 px-space-md rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-body-md text-body-md flex items-center justify-center gap-space-xs transition-colors specular-border" href="https://github.com" rel="noopener noreferrer" target="_blank">
+          <a className="h-9 px-space-md rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-body-md text-body-md flex items-center justify-center gap-space-xs transition-colors specular-border" href="https://github.com/raghav28-git/AgentArena" rel="noopener noreferrer" target="_blank">
             <span className="material-symbols-outlined text-[16px]">
               code
             </span>
