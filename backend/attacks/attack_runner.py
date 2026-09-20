@@ -30,14 +30,14 @@ def run_attack_suite(agent_config: AgentConfig, attack_configs: list[AttackConfi
         for prompt_config in prompts:
             finding = attacker.run_attack(attack_type_str, prompt_config)
             
-            trace_objects = [
-                {
+            trace_objects = []
+            for t in attacker.get_traces()[-2:]:
+                trace_objects.append({
                     "step": t["step"],
                     "role": t["role"],
                     "content": t["content"],
                     "timestamp": datetime.datetime.now().isoformat()
-                } for t in attacker.get_traces()[-2:]
-            ]
+                })
             type_traces.extend(trace_objects)
             
             if finding["compromised"]:

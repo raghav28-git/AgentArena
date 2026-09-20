@@ -9,29 +9,42 @@ export interface DashboardData { agent: AgentConfig; latestRun?: TestRun; polici
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export async function createAgent(config: AgentConfig): Promise<AgentConfig> {
-  return config; // Mock
+  const res = await fetch(`${API_BASE}/api/agents`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(config)
+  });
+  return res.json();
 }
 
 export async function runAttacks(agentId: string, attacks: AttackConfig[]): Promise<TestRun> {
-  return {} as TestRun; // Mock
-}
-
-export async function getResults(runId: string): Promise<TestRun> {
-  return {} as TestRun; // Mock
+  const res = await fetch(`${API_BASE}/api/attacks/run?agent_id=${agentId}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(attacks)
+  });
+  return res.json();
 }
 
 export async function generatePolicies(runId: string): Promise<CedarPolicy[]> {
-  return []; // Mock
+  const res = await fetch(`${API_BASE}/api/policies/generate?run_id=${runId}`, {
+    method: 'POST'
+  });
+  return res.json();
 }
 
 export async function applyPolicies(agentId: string, policyIds: string[]): Promise<void> {
-  // Mock
+  await fetch(`${API_BASE}/api/policies/apply?agent_id=${agentId}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(policyIds)
+  });
 }
 
 export async function retest(agentId: string, runId: string): Promise<TestRun> {
-  return {} as TestRun; // Mock
+  const res = await fetch(`${API_BASE}/api/attacks/retest?agent_id=${agentId}&run_id=${runId}`, {
+    method: 'POST'
+  });
+  return res.json();
 }
 
-export async function getDashboard(agentId: string): Promise<DashboardData> {
-  return {} as DashboardData; // Mock
+export async function manualHack(agentId: string, prompt: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/api/attacks/manual?agent_id=${agentId}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt })
+  });
+  return res.json();
 }

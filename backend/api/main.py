@@ -104,3 +104,19 @@ def get_dashboard(agent_id: str):
         "runs": sorted(agent_runs, key=lambda x: x.timestamp, reverse=True),
         "policies": agent_policies
     }
+
+from pydantic import BaseModel
+class ManualHackRequest(BaseModel):
+    prompt: str
+
+@app.post("/api/attacks/manual")
+def manual_hack(agent_id: str, req: ManualHackRequest):
+    if agent_id not in agents_db:
+        raise HTTPException(status_code=404, detail="Agent not found")
+        
+    from backend.agents.target_agent import create_target_agent, set_session
+    set_session("CUST-001")
+    target = create_target_agent(agents_db[agent_id].systemPrompt, use_real_strands=True)
+    
+    response = target.invoke(req.prompt)
+    return {"response": response}

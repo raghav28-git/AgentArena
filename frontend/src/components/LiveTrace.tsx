@@ -20,13 +20,24 @@ const mockTraces = [
   { type: 'system', message: "VULNERABILITY DETECTED: Data exfiltrated." }
 ];
 
-export default function LiveTrace({ active }: { active: boolean }) {
+export default function LiveTrace({ active, manualLogs = [] }: { active: boolean, manualLogs?: {type: string, message: string}[] }) {
   const [logs, setLogs] = useState<TraceLog[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Sync manual logs
+  useEffect(() => {
+    if (manualLogs.length > 0) {
+      setLogs(manualLogs.map((ml, i) => ({
+        id: `manual-${Date.now()}-${i}`,
+        type: ml.type as 'attacker' | 'target' | 'system',
+        message: ml.message
+      })));
+    }
+  }, [manualLogs]);
+
   useEffect(() => {
     if (!active) {
-      setLogs([]);
+      if (manualLogs.length === 0) setLogs([]);
       return;
     }
 
