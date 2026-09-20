@@ -12,7 +12,10 @@ export default function DashboardPage() {
     const fuzzBtn = document.getElementById('btnRunFuzz');
 
     function appendTerminalLog(level: string, tag: string, text: string, levelClass: string) {
+      const terminal = document.getElementById('terminalStream');
+      const liveLine = document.getElementById('terminalLiveLine');
       if (!terminal) return;
+      
       const now = new Date();
       const timeStr = '[' + now.toTimeString().split(' ')[0] + '.' + String(now.getMilliseconds()).padStart(3, '0') + ']';
       
@@ -31,7 +34,34 @@ export default function DashboardPage() {
     let submitHandler: (e: Event) => void;
     if (form && input) {
       submitHandler = function(e: Event) {
+    const clickHandler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const fuzzBtn = target.closest('#btnRunFuzz');
+      
+      if (fuzzBtn) {
+        appendTerminalLog('exec', 'FUZZ_RUNNER', 'Triggered concurrent fuzzing pass (1,000 permutations across 16 microVMs)...', 'text-primary font-semibold');
+        setTimeout(() => {
+          appendTerminalLog('done', 'FUZZ_STATUS', 'All 1,000 attack vectors analyzed: 998 blocked, 2 quarantined for formal proof review.', 'text-secondary font-semibold');
+        }, 450);
+      }
+      
+      const tabBtn = target.closest('.tab-btn');
+      if (tabBtn) {
+        document.querySelectorAll('#replTabs .tab-btn').forEach(b => {
+          b.className = 'tab-btn px-space-sm py-space-xs rounded font-body-sm text-body-sm text-outline hover:text-on-surface transition-colors';
+        });
+        tabBtn.className = 'tab-btn px-space-sm py-space-xs rounded font-headline-sm text-headline-sm bg-surface-container border border-[#22262d] text-on-surface';
+      }
+    };
+    
+    document.addEventListener('click', clickHandler);
+
+    const submitHandler = function(e: Event) {
+      const target = e.target as HTMLElement;
+      if (target.id === 'replInputForm') {
         e.preventDefault();
+        const input = document.getElementById('adversarialInput') as HTMLInputElement;
+        if (!input) return;
         const val = input.value.trim();
         if (!val) return;
 
@@ -48,6 +78,10 @@ export default function DashboardPage() {
       };
       form.addEventListener('submit', submitHandler);
     }
+      }
+    };
+    
+    document.addEventListener('submit', submitHandler);
 
     let fuzzHandler: () => void;
     if (fuzzBtn) {
@@ -90,6 +124,8 @@ export default function DashboardPage() {
     return () => {
       if (form && submitHandler) form.removeEventListener('submit', submitHandler);
       if (fuzzBtn && fuzzHandler) fuzzBtn.removeEventListener('click', fuzzHandler);
+      document.removeEventListener('click', clickHandler);
+      document.removeEventListener('submit', submitHandler);
       clearInterval(interval);
       tabButtons.forEach((btn, i) => {
         btn.removeEventListener('click', tabClickHandlers[i]);
